@@ -123,6 +123,7 @@ SUPERLIBS_PLATFORM_DIR := $(BUILD_DIR)/$(CURR_PLATFORM)
 SUPERLIBS_PLATFORM_FWK := $(SUPERLIBS_PLATFORM_DIR)/$(CURR_LIB).framework
 SUPERLIBS_PLATFORM_FWK_HEADERS_DIR := $(SUPERLIBS_PLATFORM_FWK)/Headers
 SUPERLIBS_PLATFORM_FWK_MODULES_DIR := $(SUPERLIBS_PLATFORM_FWK)/Modules
+SUPERLIBS_PLATFORM_FWK_RESOURCES_DIR = $(SUPERLIBS_PLATFORM_FWK)$(if $($(CURR_PLATFORM)_IS_HIERARCHICAL),/Resources)
 
 # Just use the first arch's headers
 SUPERLIBS_PLATFORM_FIRST_ARCH_PREFIX := $(SUPERLIBS_PLATFORM_DIR)/archs/$(firstword $($(CURR_PLATFORM)_ARCHS))/prefix
@@ -131,15 +132,15 @@ SUPERLIBS_PLATFORM_LIB_HEADERS := $(SUPERLIBS_PLATFORM_INCLUDE)/$($(CURR_LIB)_HE
 
 build-platform: $(foreach arch,$($(CURR_PLATFORM)_ARCHS),invoke-arch-$(arch))
 	@rm -rf $(SUPERLIBS_PLATFORM_FWK)
-	@mkdir -p $(SUPERLIBS_PLATFORM_FWK) $(SUPERLIBS_PLATFORM_FWK_MODULES_DIR)
+	@mkdir -p $(SUPERLIBS_PLATFORM_FWK) $(SUPERLIBS_PLATFORM_FWK_MODULES_DIR) $(SUPERLIBS_PLATFORM_FWK_RESOURCES_DIR)
 # If SUPERLIBS_PLATFORM_LIB_HEADERS is an entire dir then make that the framework's Headers
 # dir, otherwise create a Headers dir and copy the single header file into it
 ifeq ($(suffix $(SUPERLIBS_PLATFORM_LIB_HEADERS)),.h)
 	@mkdir -p $(SUPERLIBS_PLATFORM_FWK_HEADERS_DIR)
 endif
 	@cp -a $(SUPERLIBS_PLATFORM_LIB_HEADERS) $(SUPERLIBS_PLATFORM_FWK_HEADERS_DIR)
-	@echo "$${SUPERLIBS_LIB_MODULEMAP}" | cat > "$(SUPERLIBS_PLATFORM_FWK_MODULES_DIR)/module.modulemap"
-	@echo "$${SUPERLIBS_LIB_INFOPLIST}" | cat > "$(SUPERLIBS_PLATFORM_FWK)/Info.plist"
+	echo "$${SUPERLIBS_LIB_MODULEMAP}" | cat > "$(SUPERLIBS_PLATFORM_FWK_MODULES_DIR)/module.modulemap"
+	echo "$${SUPERLIBS_LIB_INFOPLIST}" | cat > "$(SUPERLIBS_PLATFORM_FWK_RESOURCES_DIR)/Info.plist"
 ifeq ($(words $($(CURR_PLATFORM)_ARCHS)),1)
 	@cp -L $(SUPERLIBS_PLATFORM_FIRST_ARCH_PREFIX)/lib/$($(CURR_LIB)_LIB) $(SUPERLIBS_PLATFORM_FWK)/$(CURR_LIB)
 else
@@ -148,7 +149,7 @@ endif
 ifeq ($($(CURR_PLATFORM)_IS_HIERARCHICAL),1)
 	@mkdir -p $(SUPERLIBS_PLATFORM_FWK)/Versions/A
 	@ln -s A $(SUPERLIBS_PLATFORM_FWK)/Versions/Current
-	@for file in Headers Info.plist Modules $(CURR_LIB); do \
+	@for file in Headers Resources Modules $(CURR_LIB); do \
 		mv $(SUPERLIBS_PLATFORM_FWK)/$${file} $(SUPERLIBS_PLATFORM_FWK)/Versions/A/; \
 		ln -s Versions/Current/$${file} $(SUPERLIBS_PLATFORM_FWK)/$${file}; \
 	done
@@ -166,6 +167,8 @@ SUPERLIBS_ARCH_DIR := $(SUPERLIBS_PLATFORM_DIR)/archs/$(CURR_ARCH)
 SUPERLIBS_ARCH_PREFIX := $(SUPERLIBS_ARCH_DIR)/prefix
 SUPERLIBS_ARCH_LIB_BUILD_DIR := $(SUPERLIBS_ARCH_DIR)/build/$(CURR_LIB)
 
+# TODO: Also clean if switching from one tag to another and then back
+# (store latest tag somewhere or something)
 build-arch: $(SUPERLIBS_ARCH_CONFIG_STAMP)
 	@+if [[ -f $(SUPERLIBS_ARCH_CONFIG_STAMP).new ]]; then \
 		$(MAKE) -C $(SUPERLIBS_ARCH_LIB_BUILD_DIR) \
@@ -178,14 +181,15 @@ build-arch: $(SUPERLIBS_ARCH_CONFIG_STAMP)
 		$(SUPERLIBS_MAKEFLAGS) $($(CURR_LIB)_MAKEFLAGS) -j1 all install
 	install_name_tool -id '@rpath/$(CURR_LIB).framework/$(CURR_LIB)' $(SUPERLIBS_ARCH_PREFIX)/lib/$($(CURR_LIB)_LIB)
 
-export CC = xcrun -sdk $(CURR_PLATFORM) clang -arch $(CURR_ARCH)
-export CXX = xcrun -sdk $(CURR_PLATFORM) clang++ -arch $(CURR_ARCH)
-export CFLAGS = $($(CURR_PLATFORM)_CFLAGS) $($(CURR_LIB)_CFLAGS)
+export CC = xcrun -sdk $(CURR_PLATFORM) clang -arch $(CURR_ARCH) -fembed-bitcode -fapplication-extension
+export CXX = xcrun -sdk $(CURR_PLATFORM) clang++ -arch $(CURR_ARCH) -fembed-bitcode -fapplication-extension
+export CFLAGS = $($(CURR_PLATFORM)_CFLAGS) $($(CURR_LIB)_CFLAGS) -fembed-bitcode -fapplication-extension
+export LDFLAGS = -fembed-bitcode -fapplication-extension
 export PKG_CONFIG_PATH = $(SUPERLIBS_ARCH_PREFIX)/lib/pkgconfig
 
 $(SUPERLIBS_ARCH_CONFIG_STAMP): $(SUPERLIBS_LIB_AUTOGEN_FILES)
 	@rm -rf $@.tmp
-	@mkdir -p $(dir $@) 
+	@mkdir -p $(dir $@)
 	@touch $@.tmp
 	@mkdir -p $(SUPERLIBS_ARCH_LIB_BUILD_DIR) $(SUPERLIBS_ARCH_PREFIX)
 	cd $(SUPERLIBS_ARCH_LIB_BUILD_DIR) && \
