@@ -1,6 +1,6 @@
 LIBS += usbmuxd
 
-usbmuxd_DEPS := plist
+usbmuxd_DEPS := plist libimobiledeviceGlue
 usbmuxd_PLATFORMS := $(ALL_PLATFORMS)
 
 usbmuxd_MAKEFLAGS := bin_PROGRAMS=""

@@ -1,6 +1,6 @@
 LIBS += libimobiledevice
 
-libimobiledevice_DEPS := usbmuxd plist
+libimobiledevice_DEPS := usbmuxd plist libimobiledeviceGlue
 libimobiledevice_PLATFORMS := $(ALL_PLATFORMS)
 
 # --enable-debug

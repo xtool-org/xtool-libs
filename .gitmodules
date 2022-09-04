@@ -1,7 +1,6 @@
 [submodule "libimobiledevice"]
 	path = libimobiledevice
-	url = https://github.com/kabiroberai/libimobiledevice
-	branch = openssl-rerouting
+	url = https://github.com/libimobiledevice/libimobiledevice
 [submodule "libplist"]
 	path = libplist
 	url = https://github.com/libimobiledevice/libplist
@@ -11,3 +10,6 @@
 [submodule "OpenSSL"]
 	path = OpenSSL
 	url = https://github.com/krzyzanowskim/OpenSSL
+[submodule "libimobiledevice-glue"]
+	path = libimobiledevice-glue
+	url = https://github.com/libimobiledevice/libimobiledevice-glue
