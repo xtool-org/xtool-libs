@@ -13,3 +13,9 @@
 [submodule "libimobiledevice-glue"]
 	path = libimobiledevice-glue
 	url = https://github.com/libimobiledevice/libimobiledevice-glue
+[submodule "libtatsu"]
+	path = libtatsu
+	url = https://github.com/libimobiledevice/libtatsu
+[submodule "curl"]
+	path = curl
+	url = https://github.com/curl/curl

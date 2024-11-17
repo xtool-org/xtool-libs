@@ -106,7 +106,7 @@ $(SUPERLIBS_LIB_AUTOGEN_STAMP): $(SUPERLIBS_LIB_AUTOGEN_FILES)
 	@rm -rf $@.tmp
 	@mkdir -p $(dir $@)
 	@touch $@.tmp
-	cd $($(CURR_LIB)_DIR) && NOCONFIGURE=1 ./autogen.sh
+	cd $($(CURR_LIB)_DIR) && NOCONFIGURE=1 $(or $($(CURR_LIB)_UNPACK),./autogen.sh)
 	@mv -f $@.tmp $@
 
 $(SUPERLIBS_LIB_XCFRAMEWORK): $(foreach plat,$($(CURR_LIB)_PLATFORMS),invoke-platform-$(plat))
@@ -181,10 +181,10 @@ build-arch: $(SUPERLIBS_ARCH_CONFIG_STAMP)
 		$(SUPERLIBS_MAKEFLAGS) $($(CURR_LIB)_MAKEFLAGS) -j1 all install
 	install_name_tool -id '@rpath/$(CURR_LIB).framework/$(CURR_LIB)' $(SUPERLIBS_ARCH_PREFIX)/lib/$($(CURR_LIB)_LIB)
 
-export CC = xcrun -sdk $(CURR_PLATFORM) clang -arch $(CURR_ARCH) -fembed-bitcode -fapplication-extension
-export CXX = xcrun -sdk $(CURR_PLATFORM) clang++ -arch $(CURR_ARCH) -fembed-bitcode -fapplication-extension
-export CFLAGS = $($(CURR_PLATFORM)_CFLAGS) $($(CURR_LIB)_CFLAGS) -fembed-bitcode -fapplication-extension
-export LDFLAGS = -fembed-bitcode -fapplication-extension
+export CC = xcrun -sdk $(CURR_PLATFORM) clang -arch $(CURR_ARCH) -fapplication-extension
+export CXX = xcrun -sdk $(CURR_PLATFORM) clang++ -arch $(CURR_ARCH) -fapplication-extension
+export CFLAGS = $($(CURR_PLATFORM)_CFLAGS) $($(CURR_LIB)_CFLAGS) -fapplication-extension
+export LDFLAGS = -fapplication-extension
 export PKG_CONFIG_PATH = $(SUPERLIBS_ARCH_PREFIX)/lib/pkgconfig
 
 $(SUPERLIBS_ARCH_CONFIG_STAMP): $(SUPERLIBS_LIB_AUTOGEN_FILES)
