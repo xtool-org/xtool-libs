@@ -15,7 +15,9 @@ jobs:
           submodules: recursive
       
       - name: Build
-        run: make -j8
+        run: |
+          brew install automake autoconf libtool pkg-config
+          make -j8
       
       - name: Upload plist
         uses: actions/upload-artifact@v4
