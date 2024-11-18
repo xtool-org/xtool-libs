@@ -187,7 +187,7 @@ export CFLAGS = $($(CURR_PLATFORM)_CFLAGS) $($(CURR_LIB)_CFLAGS) -fapplication-e
 export LDFLAGS = -fapplication-extension
 export PKG_CONFIG_PATH = $(SUPERLIBS_ARCH_PREFIX)/lib/pkgconfig
 
-$(SUPERLIBS_ARCH_CONFIG_STAMP): $(SUPERLIBS_LIB_AUTOGEN_FILES)
+$(SUPERLIBS_ARCH_CONFIG_STAMP): $(SUPERLIBS_LIB_AUTOGEN_STAMP)
 	@rm -rf $@.tmp
 	@mkdir -p $(dir $@)
 	@touch $@.tmp
