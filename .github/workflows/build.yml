@@ -4,18 +4,17 @@ on:
 jobs:
   build:
     runs-on: macos-latest
-
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
       - name: Build
         run: |
           brew install automake autoconf libtool pkg-config
           make -j8
-      
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
