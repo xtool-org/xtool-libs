@@ -1,8 +1,5 @@
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 jobs:
   build:
@@ -19,26 +16,13 @@ jobs:
           brew install automake autoconf libtool pkg-config
           make -j8
       
-      - name: Upload plist
-        uses: actions/upload-artifact@v4
+      - name: Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: plist.xcframework
-          path: output/plist.xcframework
-      
-      - name: Upload usbmuxd
-        uses: actions/upload-artifact@v4
-        with:
-          name: usbmuxd.xcframework
-          path: output/usbmuxd.xcframework
-
-      - name: Upload libimobiledeviceGlue
-        uses: actions/upload-artifact@v4
-        with:
-          name: libimobiledeviceGlue.xcframework
-          path: output/libimobiledeviceGlue.xcframework
-
-      - name: Upload libimobiledevice
-        uses: actions/upload-artifact@v4
-        with:
-          name: libimobiledevice.xcframework
-          path: output/libimobiledevice.xcframework
+          files: |
+            output/curl.xcframework
+            output/tatsu.xcframework
+            output/plist.xcframework
+            output/usbmuxd.xcframework
+            output/libimobiledeviceGlue.xcframework
+            output/libimobiledevice.xcframework
