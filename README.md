@@ -2,4 +2,18 @@
 
 Binary frameworks used by Supercharge
 
-Use `-j8` to _supercharge_ the `make` experience ;)
+## Setup
+
+```bash
+brew install automake autoconf libtool pkg-config
+git clone https://github.com/SuperchargeApp/Superlibs
+cd Superlibs
+```
+
+## Building
+
+```bash
+make -j8
+```
+
+The outputs will be located at `output/*.xcframework`.
