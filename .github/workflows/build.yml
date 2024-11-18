@@ -21,9 +21,9 @@ jobs:
         with:
           draft: true
           files: |
-            output/curl.xcframework
-            output/tatsu.xcframework
-            output/plist.xcframework
-            output/usbmuxd.xcframework
-            output/libimobiledeviceGlue.xcframework
-            output/libimobiledevice.xcframework
+            output/curl.xcframework.zip
+            output/tatsu.xcframework.zip
+            output/plist.xcframework.zip
+            output/usbmuxd.xcframework.zip
+            output/libimobiledeviceGlue.xcframework.zip
+            output/libimobiledevice.xcframework.zip
