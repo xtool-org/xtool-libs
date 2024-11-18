@@ -1,0 +1,40 @@
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Build
+        run: make -j8
+      
+      - name: Upload plist
+        uses: actions/upload-artifact@v4
+        with:
+          name: plist.xcframework
+          path: output/plist.xcframework
+      
+      - name: Upload usbmuxd
+        uses: actions/upload-artifact@v4
+        with:
+          name: usbmuxd.xcframework
+          path: output/usbmuxd.xcframework
+
+      - name: Upload libimobiledeviceGlue
+        uses: actions/upload-artifact@v4
+        with:
+          name: libimobiledeviceGlue.xcframework
+          path: output/libimobiledeviceGlue.xcframework
+
+      - name: Upload libimobiledevice
+        uses: actions/upload-artifact@v4
+        with:
+          name: libimobiledevice.xcframework
+          path: output/libimobiledevice.xcframework
