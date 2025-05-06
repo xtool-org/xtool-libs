@@ -1,13 +1,13 @@
-# Superlibs
+# xtool-libs
 
-Binary frameworks used by Supercharge
+Binary frameworks used by xtool
 
 ## Setup
 
 ```bash
 brew install automake autoconf libtool pkg-config
-git clone https://github.com/SuperchargeApp/Superlibs
-cd Superlibs
+git clone https://github.com/xtool-org/xtool-libs
+cd xtool-libs
 ```
 
 ## Building
